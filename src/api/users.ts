@@ -1,49 +1,27 @@
 import request, { type ApiResponse } from '@/utils/request'
 
-interface LoginParams {
+export interface LoginRequest {
     username: string
     password: string
 }
 
-interface RegisterParams {
+export interface RegisterRequest {
     username: string
     password: string
 }
 
-interface LoginResult {
-    token: string
-}
-
-interface RegisterResult {
+export interface ProfileResponse {
     id: number
+    username: string
+}
+export const apiLogin = (params: LoginRequest) => {
+    return request.post<{token: string}>('/users/login', params)
 }
 
-export const login = (params: LoginParams) => {
-    return new Promise<ApiResponse<LoginResult>>((resolve) => {
-        setTimeout(() => {
-            console.log('模拟登录请求:', params)
-            resolve({
-                code: 200,
-                msg: '登录成功',
-                data: { token: 'mock_token_123456' },
-            })
-        }, 500)
-    })
-    // TODO: 替换为真实接口
-    // return request.post<LoginResult>('/v1/login', params)
+export const apiRegister = (params: RegisterRequest) => {
+    return request.post<void>('/users/register', params)
 }
 
-export const register = (params: RegisterParams) => {
-    return new Promise<ApiResponse<RegisterResult>>((resolve) => {
-        setTimeout(() => {
-            console.log('模拟注册请求:', params)
-            resolve({
-                code: 200,
-                msg: '注册成功',
-                data: { id: 1 },
-            })
-        }, 500)
-    })
-    // TODO: 替换为真实接口
-    // return request.post<RegisterResult>('/v1/register', params)
+export const apiGetProfile = () => {
+    return request.get<ProfileResponse>('/users/profile')
 }

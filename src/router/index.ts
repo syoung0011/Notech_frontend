@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
 import { getToken } from '@/utils/storage'
+import {UserStore} from "@/stores/users.ts"
 
 const routes: RouteRecordRaw[] = [
   {
@@ -40,13 +41,20 @@ const router = createRouter({
 })
 
 router.beforeEach((to: RouteLocationNormalized) => {
-  const hasToken = !!getToken()
+  const userStore = UserStore()
+  const hasToken = userStore.hasToken
   if (!hasToken && !to.meta.isPublic) {
     return { path: '/auth', query: { redirect: to.fullPath } }
   }
-  if (hasToken && to.path === '/auth') {
-    return { path: '/' }
-  }
-})
+  if (hasToken) {
+    if (to.path === '/auth') {
+      return { path: '/' }
+    }
 
+    if (!userStore.profile) {
+      userStore.getProfile()
+    }
+  }
+  return true
+})
 export default router

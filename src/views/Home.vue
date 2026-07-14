@@ -3,15 +3,12 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { removeToken } from "@/utils/storage.ts"
+import {UserStore} from "@/stores/users.ts";
 
 const router = useRouter()
 const route = useRoute()
+const userStore = UserStore()
 const isCollapse = ref(false)
-const handleLogout = () => {
-  removeToken()
-  ElMessage.success('已退出登录')
-  router.push('/auth')
-}
 const handleProfile = () => ElMessage.info('个人信息功能开发中')
 const handleHelp = () => ElMessage.info('帮助中心功能开发中')
 </script>
@@ -29,7 +26,7 @@ const handleHelp = () => ElMessage.info('帮助中心功能开发中')
         <el-dropdown>
           <span class="el-dropdown-link">
             <el-icon :size="20"><User/></el-icon>
-            <span>用户名</span>
+            <span>用户{{userStore.profile?.id}}：{{userStore.profile?.username}}</span>
             <el-icon :size="14"><ArrowDown/></el-icon>
           </span>
           <template #dropdown>
@@ -42,7 +39,7 @@ const handleHelp = () => ElMessage.info('帮助中心功能开发中')
                 <el-icon :size="16"><Help/></el-icon>
                 <span>帮助中心</span>
               </el-dropdown-item>
-              <el-dropdown-item @click="handleLogout">
+              <el-dropdown-item @click="userStore.logout">
                 <el-icon :size="16"><SwitchButton/></el-icon>
                 <span>退出登录</span>
               </el-dropdown-item>
@@ -88,7 +85,7 @@ const handleHelp = () => ElMessage.info('帮助中心功能开发中')
               <el-icon><User /></el-icon>
               <template #title>个人信息</template>
             </el-menu-item>
-            <el-menu-item index="logout" @click="handleLogout">
+            <el-menu-item index="logout" @click="userStore.logout">
               <el-icon><SwitchButton /></el-icon>
               <template #title>退出登录</template>
             </el-menu-item>
